@@ -23,9 +23,11 @@ import android.support.v7.app.AppCompatActivity
 import android.text.Editable
 import android.text.InputFilter
 import android.text.TextWatcher
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.*
+import android.widget.ProgressBar
+import com.google.firebase.database.*
 import com.google.firebase.udacity.friendlychat.utils.Constants
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
@@ -35,12 +37,17 @@ class MainActivity : AppCompatActivity() {
     private var messageAdapter: MessageAdapter? = null
     private var username: String? = null
 
+    private lateinit var firebaseDatabase: FirebaseDatabase
+    private lateinit var databaseReference: DatabaseReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         username = Constants.ANONYMOUS
+
+        firebaseDatabase= FirebaseDatabase.getInstance()
+        databaseReference=firebaseDatabase.reference.child("messages")
 
         // Initialize message ListView and its adapter
         val friendlyMessages = ArrayList<FriendlyMessage>()
@@ -61,6 +68,7 @@ class MainActivity : AppCompatActivity() {
 
             override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
                 send_button.isEnabled = charSequence.toString().trim { it <= ' ' }.isNotEmpty()
+
             }
 
             override fun afterTextChanged(editable: Editable) {}
@@ -69,11 +77,37 @@ class MainActivity : AppCompatActivity() {
 
         // Send button sends a message and clears the EditText
         send_button.setOnClickListener {
+            val message=FriendlyMessage(message_edit_text.text.toString(),username!!,null)
+
+            databaseReference.push().setValue(message)
             // TODO: Send messages on click
 
             // Clear input box
             message_edit_text.setText("")
         }
+
+        databaseReference.addChildEventListener(object : ChildEventListener{
+            override fun onChildMoved(p0: DataSnapshot, p1: String?) {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+
+            override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+
+            override fun onChildAdded(p0: DataSnapshot, p1: String?) {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+
+            override fun onChildRemoved(p0: DataSnapshot) {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+
+            override fun onCancelled(p0: DatabaseError) {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
