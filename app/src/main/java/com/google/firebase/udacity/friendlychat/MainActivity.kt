@@ -24,76 +24,55 @@ import android.text.Editable
 import android.text.InputFilter
 import android.text.TextWatcher
 import android.view.Menu
-import android.view.MenuInflater
 import android.view.MenuItem
-import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.ListView
-import android.widget.ProgressBar
-
-import java.util.ArrayList
+import android.widget.*
+import com.google.firebase.udacity.friendlychat.utils.Constants
+import kotlinx.android.synthetic.main.activity_main.*
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-    private var mMessageListView: ListView? = null
-    private var mMessageAdapter: MessageAdapter? = null
-    private var mProgressBar: ProgressBar? = null
-    private var mPhotoPickerButton: ImageButton? = null
-    private var mMessageEditText: EditText? = null
-    private var mSendButton: Button? = null
+    private var messageAdapter: MessageAdapter? = null
+    private var username: String? = null
 
-    private var mUsername: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        mUsername = ANONYMOUS
-
-        // Initialize references to views
-        mProgressBar = findViewById(R.id.progressBar) as ProgressBar
-        mMessageListView = findViewById(R.id.messageListView) as ListView
-        mPhotoPickerButton = findViewById(R.id.photoPickerButton) as ImageButton
-        mMessageEditText = findViewById(R.id.messageEditText) as EditText
-        mSendButton = findViewById(R.id.sendButton) as Button
+        username = Constants.ANONYMOUS
 
         // Initialize message ListView and its adapter
         val friendlyMessages = ArrayList<FriendlyMessage>()
-        mMessageAdapter = MessageAdapter(this, R.layout.item_message, friendlyMessages)
-        mMessageListView!!.adapter = mMessageAdapter
+        messageAdapter = MessageAdapter(this, R.layout.item_message, friendlyMessages)
+        message_list_view.adapter = messageAdapter
 
         // Initialize progress bar
-        mProgressBar!!.visibility = ProgressBar.INVISIBLE
+        progress_bar.visibility = ProgressBar.INVISIBLE
 
         // ImagePickerButton shows an image picker to upload a image for a message
-        mPhotoPickerButton!!.setOnClickListener {
+        photo_picker_button.setOnClickListener {
             // TODO: Fire an intent to show an image picker
         }
 
         // Enable Send button when there's text to send
-        mMessageEditText!!.addTextChangedListener(object : TextWatcher {
+        message_edit_text.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
 
             override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
-                if (charSequence.toString().trim { it <= ' ' }.length > 0) {
-                    mSendButton!!.isEnabled = true
-                } else {
-                    mSendButton!!.isEnabled = false
-                }
+                send_button.isEnabled = charSequence.toString().trim { it <= ' ' }.isNotEmpty()
             }
 
             override fun afterTextChanged(editable: Editable) {}
         })
-        mMessageEditText!!.filters = arrayOf<InputFilter>(InputFilter.LengthFilter(DEFAULT_MSG_LENGTH_LIMIT))
+        message_edit_text.filters = arrayOf<InputFilter>(InputFilter.LengthFilter(Constants.DEFAULT_MSG_LENGTH_LIMIT))
 
         // Send button sends a message and clears the EditText
-        mSendButton!!.setOnClickListener {
+        send_button.setOnClickListener {
             // TODO: Send messages on click
 
             // Clear input box
-            mMessageEditText!!.setText("")
+            message_edit_text.setText("")
         }
     }
 
@@ -107,11 +86,5 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    companion object {
 
-        private val TAG = "MainActivity"
-
-        val ANONYMOUS = "anonymous"
-        val DEFAULT_MSG_LENGTH_LIMIT = 1000
-    }
 }

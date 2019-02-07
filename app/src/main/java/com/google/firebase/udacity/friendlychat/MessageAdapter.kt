@@ -20,17 +20,17 @@ class MessageAdapter(context: Context, resource: Int, objects: List<FriendlyMess
 
         val isPhoto = message!!.photoUrl != null
         if (isPhoto) {
-            convertView!!.messageTextView.visibility = View.GONE
-            convertView.photoImageView.visibility = View.VISIBLE
-            Glide.with(convertView.photoImageView.context)
+            convertView!!.message_text_view.visibility = View.GONE
+            convertView.photo_image_view.visibility = View.VISIBLE
+            Glide.with(convertView.photo_image_view.context)
                     .load(message.photoUrl)
-                    .into(convertView.photoImageView)
+                    .into(convertView.photo_image_view)
         } else {
-            convertView!!.messageTextView.visibility = View.VISIBLE
-            convertView.photoImageView.visibility = View.GONE
-            convertView.messageTextView.text = message.text
+            convertView!!.message_text_view.visibility = View.VISIBLE
+            convertView.photo_image_view.visibility = View.GONE
+            convertView.message_text_view.text = message.text
         }
-        convertView.nameTextView.text = message.name
+        convertView.name_text_view.text = message.name
 
         return convertView
     }

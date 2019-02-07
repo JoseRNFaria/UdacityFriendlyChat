@@ -6,6 +6,7 @@ buildscript {
     ext.glide_version = "28.0.0"
     ext.glide_version = "3.7.0"
     ext.firebase_version = "16.0.7"
+    ext.firebase_database_version = "16.0.6"
 
     repositories {
         jcenter()
