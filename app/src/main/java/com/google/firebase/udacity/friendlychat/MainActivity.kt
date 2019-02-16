@@ -32,6 +32,10 @@ import android.widget.Toast
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import com.google.firebase.udacity.friendlychat.utils.Constants
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
@@ -39,7 +43,9 @@ import java.util.*
 class MainActivity : AppCompatActivity() {
 
     private val RC_SIGN_IN = 1
-    private var username: String? = null
+    private val RC_PHOTO_PICKER = 2
+
+    private var username = Constants.ANONYMOUS
 
     private lateinit var messageAdapter: MessageAdapter
     private lateinit var firebaseDatabase: FirebaseDatabase
@@ -47,18 +53,28 @@ class MainActivity : AppCompatActivity() {
     private var eventListener: ChildEventListener? = null
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var authStateListener: FirebaseAuth.AuthStateListener
+    private lateinit var firebaseStorage: FirebaseStorage
+    private lateinit var firebaseRemoteConfig: FirebaseRemoteConfig
+    private lateinit var chatPhotosStorageReference: StorageReference
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        username = Constants.ANONYMOUS
-
         firebaseDatabase = FirebaseDatabase.getInstance()
-
         firebaseAuth = FirebaseAuth.getInstance()
         databaseReference = firebaseDatabase.reference.child("messages")
+        firebaseStorage = FirebaseStorage.getInstance()
+        chatPhotosStorageReference = firebaseStorage.reference.child("chat_photos")
+        firebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
+        val configSettings = FirebaseRemoteConfigSettings.Builder().setDeveloperModeEnabled(BuildConfig.DEBUG).build()
+        firebaseRemoteConfig.setConfigSettings(configSettings)
+
+        val defaultConfigSettings=mapOf(Constants.MSG_LENGTH_KEY to Constants.DEFAULT_MSG_LENGTH_LIMIT)
+        firebaseRemoteConfig.setDefaults(defaultConfigSettings)
+        fetchConfig()
+
 
         // Initialize message ListView and its adapter
         val friendlyMessages = ArrayList<FriendlyMessage>()
@@ -68,10 +84,6 @@ class MainActivity : AppCompatActivity() {
         // Initialize progress bar
         progress_bar.visibility = ProgressBar.INVISIBLE
 
-        // ImagePickerButton shows an image picker to upload a image for a message
-        photo_picker_button.setOnClickListener {
-            // TODO: Fire an intent to show an image picker
-        }
 
         // Enable Send button when there's text to send
         message_edit_text.addTextChangedListener(object : TextWatcher {
@@ -84,11 +96,10 @@ class MainActivity : AppCompatActivity() {
 
             override fun afterTextChanged(editable: Editable) {}
         })
-        message_edit_text.filters = arrayOf<InputFilter>(InputFilter.LengthFilter(Constants.DEFAULT_MSG_LENGTH_LIMIT))
 
         // Send button sends a message and clears the EditText
         send_button.setOnClickListener {
-            val message = FriendlyMessage(message_edit_text.text.toString(), username!!, null)
+            val message = FriendlyMessage(message_edit_text.text.toString(), username, null)
 
             databaseReference.push().setValue(message)
 
@@ -101,7 +112,7 @@ class MainActivity : AppCompatActivity() {
         authStateListener = FirebaseAuth.AuthStateListener { firebaseAuth ->
             val user = firebaseAuth.currentUser
             if (user != null) {
-                onSignedIn(user.displayName)
+                onSignedIn(user.displayName!!)
             } else {
                 onSignOut()
                 val providers = arrayListOf(
@@ -117,6 +128,15 @@ class MainActivity : AppCompatActivity() {
                                 .build(), RC_SIGN_IN)
             }
         }
+
+        photo_picker_button.setOnClickListener { _ ->
+            val intent = Intent(Intent.ACTION_GET_CONTENT)
+            intent.type = "image/jpeg"
+            intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true)
+            startActivityForResult(Intent.createChooser(intent, "Complete action using"), RC_PHOTO_PICKER)
+        }
+
+
     }
 
     private fun onSignOut() {
@@ -126,7 +146,7 @@ class MainActivity : AppCompatActivity() {
         removeChildEventListener()
     }
 
-    private fun onSignedIn(displayName: String?) {
+    private fun onSignedIn(displayName: String) {
         username = displayName
         addChildEventListener()
     }
@@ -159,15 +179,25 @@ class MainActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode==RC_SIGN_IN)
-        {
-            if(resultCode==RESULT_OK)
-            {
-                Toast.makeText(this,"Signed in",Toast.LENGTH_LONG).show()
+        if (requestCode == RC_SIGN_IN) {
+            if (resultCode == RESULT_OK) {
+                Toast.makeText(this, "Signed in", Toast.LENGTH_LONG).show()
+            } else if (resultCode == Activity.RESULT_CANCELED) {
+                Toast.makeText(this, "Login cancelled", Toast.LENGTH_SHORT).show()
             }
-            else if(resultCode== Activity.RESULT_CANCELED)
-            {
-                Toast.makeText(this,"Login cancelled",Toast.LENGTH_SHORT).show()
+        } else if (requestCode == RC_PHOTO_PICKER && resultCode == RESULT_OK) {
+            val imageURI = data!!.data!!
+            val photoRef = chatPhotosStorageReference.child(imageURI.lastPathSegment!!)
+            photoRef.putFile(imageURI).addOnSuccessListener { taskSnapshot ->
+                photoRef.downloadUrl.addOnCompleteListener { result ->
+                    val url = result.result
+                    val friendlyMessage = FriendlyMessage(null, username, url.toString())
+                    Toast.makeText(this, url.toString(), Toast.LENGTH_LONG).show()
+                    //https://firebasestorage.googleapis.com/v0/b/friendlychat-7c1af.appspot.com/o/chat_photos%2Fimage%3A16002?alt=media&token=b59a3bbb-fc03-4780-9e69-2e02daba3e55
+                    databaseReference.push().setValue(friendlyMessage)
+                }
+
+
             }
         }
     }
@@ -179,8 +209,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId)
-        {
+        when (item.itemId) {
             R.id.sign_out_menu -> AuthUI.getInstance().signOut(this)
         }
         return super.onOptionsItemSelected(item)
@@ -197,4 +226,28 @@ class MainActivity : AppCompatActivity() {
         removeChildEventListener()
         firebaseAuth.removeAuthStateListener(authStateListener)
     }
+
+    fun fetchConfig()
+    {
+        var cacheExpiration=3600L
+
+        if(firebaseRemoteConfig.info.configSettings.isDeveloperModeEnabled)
+        {
+            cacheExpiration=0L
+        }
+
+        firebaseRemoteConfig.fetch(cacheExpiration).addOnSuccessListener {
+            firebaseRemoteConfig.activateFetched()
+            applyRetrievedlenghtLimit()
+        }.addOnFailureListener {
+            applyRetrievedlenghtLimit()
+        }
+    }
+
+    fun applyRetrievedlenghtLimit(){
+        val msgLength=firebaseRemoteConfig.getLong(Constants.MSG_LENGTH_KEY)
+        message_edit_text.filters = arrayOf<InputFilter>(InputFilter.LengthFilter(msgLength.toInt()))
+    }
+
+
 }
