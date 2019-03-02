@@ -22,7 +22,6 @@ class StartActivity : AppCompatActivity() {
 
         firebaseAuth = FirebaseAuth.getInstance()
 
-
         authStateListener = FirebaseAuth.AuthStateListener { firebaseAuth ->
             val user = firebaseAuth.currentUser
             if (user != null) {
@@ -30,12 +29,14 @@ class StartActivity : AppCompatActivity() {
                 goToNextActivity(user.displayName!!)
             } else {
                 login_button.isEnabled=true
+                firebaseAuth.removeAuthStateListener(authStateListener)
             }
         }
-
         firebaseAuth.addAuthStateListener(authStateListener)
 
+
         login_button.setOnClickListener {
+
             val providers = arrayListOf(
                     AuthUI.IdpConfig.EmailBuilder().build(),
                     AuthUI.IdpConfig.GoogleBuilder().build())
@@ -45,6 +46,8 @@ class StartActivity : AppCompatActivity() {
                             .setAvailableProviders(providers)
                             .setIsSmartLockEnabled(false)
                             .build(), Constants.RC_SIGN_IN)
+
+
         }
 
 
@@ -57,6 +60,8 @@ class StartActivity : AppCompatActivity() {
         if (requestCode == Constants.RC_SIGN_IN) {
             if (resultCode == RESULT_OK) {
                 Toast.makeText(this, "Signed in", Toast.LENGTH_LONG).show()
+                firebaseAuth.addAuthStateListener(authStateListener)
+               // goToNextActivity("test")
             } else if (resultCode == Activity.RESULT_CANCELED) {
                 Toast.makeText(this, "Login cancelled", Toast.LENGTH_SHORT).show()
             }
@@ -70,5 +75,7 @@ class StartActivity : AppCompatActivity() {
         startActivity(intent)
         finish()
     }
+
+
 
 }

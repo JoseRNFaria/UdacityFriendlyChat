@@ -6,4 +6,5 @@
 
     <string name="start_Activity_text">You are not logged in please login in order to join a chat room</string>
     <string name="login_button">Login</string>
+    <string name="title_activity_room">RoomActivity</string>
 </resources>

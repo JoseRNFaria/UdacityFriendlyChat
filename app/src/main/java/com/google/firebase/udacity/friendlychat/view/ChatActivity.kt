@@ -64,7 +64,7 @@ class ChatActivity : AppCompatActivity() {
         val usernameExtra = intent.getStringExtra(Constants.USERNAME_PARAM)
 
         if (usernameExtra == null) {
-            onBackPressed()
+            loggedOut()
         } else {
             username = usernameExtra
         }
@@ -192,8 +192,7 @@ class ChatActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.sign_out_menu -> {
-                AuthUI.getInstance().signOut(this)
-                this@ChatActivity.onBackPressed()
+                AuthUI.getInstance().signOut(this).addOnSuccessListener {loggedOut()}
             }
         }
         return super.onOptionsItemSelected(item)
@@ -226,6 +225,12 @@ class ChatActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
+        val intent = Intent(this, RoomActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
+     private fun loggedOut() {
         val intent = Intent(this, StartActivity::class.java)
         startActivity(intent)
         finish()
