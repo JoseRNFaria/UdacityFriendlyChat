@@ -36,19 +36,19 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.udacity.friendlychat.BuildConfig
 import com.google.firebase.udacity.friendlychat.R
-import com.google.firebase.udacity.friendlychat.components.MessageAdapter
+import com.google.firebase.udacity.friendlychat.components.chatMessages.MessageChatAdapter
 import com.google.firebase.udacity.friendlychat.utils.Constants
-import com.google.firebase.udacity.friendlychat.utils.FriendlyMessage
+import com.google.firebase.udacity.friendlychat.utils.objects.FriendlyMessage
 import kotlinx.android.synthetic.main.activity_chat.*
 import java.util.*
 
-class ChatActivity : AppCompatActivity() {
+class ChatView : AppCompatActivity() {
 
     private val RC_PHOTO_PICKER = 2
 
     private var username = Constants.ANONYMOUS
 
-    private lateinit var messageAdapter: MessageAdapter
+    private lateinit var messageChatAdapter: MessageChatAdapter
     private lateinit var firebaseDatabase: FirebaseDatabase
     private lateinit var databaseReference: DatabaseReference
     private var eventListener: ChildEventListener? = null
@@ -83,8 +83,8 @@ class ChatActivity : AppCompatActivity() {
 
         // Initialize message ListView and its adapter
         val friendlyMessages = ArrayList<FriendlyMessage>()
-        messageAdapter = MessageAdapter(this, R.layout.item_message, friendlyMessages)
-        message_list_view.adapter = messageAdapter
+        messageChatAdapter = MessageChatAdapter(this, R.layout.item_message, friendlyMessages)
+        message_list_view.adapter = messageChatAdapter
 
         // Initialize progress bar
         progress_bar.visibility = ProgressBar.INVISIBLE
@@ -129,7 +129,7 @@ class ChatActivity : AppCompatActivity() {
 
     /*private fun onSignOut() {
         username = Constants.ANONYMOUS
-        messageAdapter.clear()
+        messageChatAdapter.clear()
 
         removeChildEventListener()
     }
@@ -154,7 +154,7 @@ class ChatActivity : AppCompatActivity() {
 
                 override fun onChildAdded(p0: DataSnapshot, p1: String?) {
                     val message = p0.getValue(FriendlyMessage::class.java)
-                    messageAdapter.add(message)
+                    messageChatAdapter.add(message)
                 }
 
                 override fun onChildRemoved(p0: DataSnapshot) {}
@@ -200,7 +200,7 @@ class ChatActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        messageAdapter.clear()
+        messageChatAdapter.clear()
         removeChildEventListener()
     }
 
@@ -225,13 +225,13 @@ class ChatActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        val intent = Intent(this, RoomActivity::class.java)
+        val intent = Intent(this, RoomView::class.java)
         startActivity(intent)
         finish()
     }
 
      private fun loggedOut() {
-        val intent = Intent(this, StartActivity::class.java)
+        val intent = Intent(this, StartView::class.java)
         startActivity(intent)
         finish()
     }

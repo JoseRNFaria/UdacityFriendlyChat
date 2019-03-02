@@ -4,6 +4,8 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Toast
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
@@ -11,7 +13,7 @@ import com.google.firebase.udacity.friendlychat.R
 import com.google.firebase.udacity.friendlychat.utils.Constants
 import kotlinx.android.synthetic.main.activity_start.*
 
-class StartActivity : AppCompatActivity() {
+class StartView : AppCompatActivity() {
 
     private lateinit var authStateListener: FirebaseAuth.AuthStateListener
     private lateinit var firebaseAuth: FirebaseAuth
@@ -54,6 +56,12 @@ class StartActivity : AppCompatActivity() {
 
     }
 
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        return true
+    }
+
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -70,7 +78,7 @@ class StartActivity : AppCompatActivity() {
 
     private fun goToNextActivity(displayName: String)
     {
-        val intent = Intent(this, ChatActivity::class.java)
+        val intent = Intent(this, RoomView::class.java)
         intent.putExtra(Constants.USERNAME_PARAM,displayName)
         startActivity(intent)
         finish()

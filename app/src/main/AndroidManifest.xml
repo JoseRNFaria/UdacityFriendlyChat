@@ -11,20 +11,18 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:name=".view.RoomActivity"
-            android:label="@string/title_activity_room"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:name=".view.RoomView"
+            android:label="@string/title_activity_room"/>
         <activity
-            android:name=".view.StartActivity"
-            android:label="@string/title_activity_start"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:name=".view.StartView"
+            android:label="@string/title_activity_start">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".view.ChatActivity" />
+        <activity android:name=".view.ChatView" />
     </application>
 
 </manifest>
