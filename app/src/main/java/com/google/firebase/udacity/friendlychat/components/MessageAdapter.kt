@@ -1,4 +1,4 @@
-package com.google.firebase.udacity.friendlychat
+package com.google.firebase.udacity.friendlychat.components
 
 import android.app.Activity
 import android.content.Context
@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import com.bumptech.glide.Glide
+import com.google.firebase.udacity.friendlychat.R
+import com.google.firebase.udacity.friendlychat.utils.FriendlyMessage
 import kotlinx.android.synthetic.main.item_message.view.*
 
 class MessageAdapter(context: Context, resource: Int, objects: List<FriendlyMessage>) : ArrayAdapter<FriendlyMessage>(context, resource, objects) {

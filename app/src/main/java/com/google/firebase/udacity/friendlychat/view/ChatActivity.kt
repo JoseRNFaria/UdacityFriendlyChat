@@ -16,9 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.google.firebase.udacity.friendlychat
+package com.google.firebase.udacity.friendlychat.view
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -30,19 +29,21 @@ import android.view.MenuItem
 import android.widget.ProgressBar
 import android.widget.Toast
 import com.firebase.ui.auth.AuthUI
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import com.google.firebase.udacity.friendlychat.BuildConfig
+import com.google.firebase.udacity.friendlychat.R
+import com.google.firebase.udacity.friendlychat.components.MessageAdapter
 import com.google.firebase.udacity.friendlychat.utils.Constants
-import kotlinx.android.synthetic.main.activity_main.*
+import com.google.firebase.udacity.friendlychat.utils.FriendlyMessage
+import kotlinx.android.synthetic.main.activity_chat.*
 import java.util.*
 
-class MainActivity : AppCompatActivity() {
+class ChatActivity : AppCompatActivity() {
 
-    private val RC_SIGN_IN = 1
     private val RC_PHOTO_PICKER = 2
 
     private var username = Constants.ANONYMOUS
@@ -51,8 +52,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var firebaseDatabase: FirebaseDatabase
     private lateinit var databaseReference: DatabaseReference
     private var eventListener: ChildEventListener? = null
-    private lateinit var firebaseAuth: FirebaseAuth
-    private lateinit var authStateListener: FirebaseAuth.AuthStateListener
     private lateinit var firebaseStorage: FirebaseStorage
     private lateinit var firebaseRemoteConfig: FirebaseRemoteConfig
     private lateinit var chatPhotosStorageReference: StorageReference
@@ -60,10 +59,17 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_chat)
+
+        val usernameExtra = intent.getStringExtra(Constants.USERNAME_PARAM)
+
+        if (usernameExtra == null) {
+            onBackPressed()
+        } else {
+            username = usernameExtra
+        }
 
         firebaseDatabase = FirebaseDatabase.getInstance()
-        firebaseAuth = FirebaseAuth.getInstance()
         databaseReference = firebaseDatabase.reference.child("messages")
         firebaseStorage = FirebaseStorage.getInstance()
         chatPhotosStorageReference = firebaseStorage.reference.child("chat_photos")
@@ -71,10 +77,9 @@ class MainActivity : AppCompatActivity() {
         val configSettings = FirebaseRemoteConfigSettings.Builder().setDeveloperModeEnabled(BuildConfig.DEBUG).build()
         firebaseRemoteConfig.setConfigSettings(configSettings)
 
-        val defaultConfigSettings=mapOf(Constants.MSG_LENGTH_KEY to Constants.DEFAULT_MSG_LENGTH_LIMIT)
+        val defaultConfigSettings = mapOf(Constants.MSG_LENGTH_KEY to Constants.DEFAULT_MSG_LENGTH_LIMIT)
         firebaseRemoteConfig.setDefaults(defaultConfigSettings)
         fetchConfig()
-
 
         // Initialize message ListView and its adapter
         val friendlyMessages = ArrayList<FriendlyMessage>()
@@ -109,25 +114,7 @@ class MainActivity : AppCompatActivity() {
 
 
 
-        authStateListener = FirebaseAuth.AuthStateListener { firebaseAuth ->
-            val user = firebaseAuth.currentUser
-            if (user != null) {
-                onSignedIn(user.displayName!!)
-            } else {
-                onSignOut()
-                val providers = arrayListOf(
-                        AuthUI.IdpConfig.EmailBuilder().build(),
-                        AuthUI.IdpConfig.GoogleBuilder().build())
 
-
-                startActivityForResult(
-                        AuthUI.getInstance()
-                                .createSignInIntentBuilder()
-                                .setAvailableProviders(providers)
-                                .setIsSmartLockEnabled(false)
-                                .build(), RC_SIGN_IN)
-            }
-        }
 
         photo_picker_button.setOnClickListener { _ ->
             val intent = Intent(Intent.ACTION_GET_CONTENT)
@@ -137,9 +124,10 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+        addChildEventListener()
     }
 
-    private fun onSignOut() {
+    /*private fun onSignOut() {
         username = Constants.ANONYMOUS
         messageAdapter.clear()
 
@@ -149,7 +137,7 @@ class MainActivity : AppCompatActivity() {
     private fun onSignedIn(displayName: String) {
         username = displayName
         addChildEventListener()
-    }
+    }*/
 
     private fun removeChildEventListener() {
         if (eventListener != null) {
@@ -178,14 +166,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == RC_SIGN_IN) {
-            if (resultCode == RESULT_OK) {
-                Toast.makeText(this, "Signed in", Toast.LENGTH_LONG).show()
-            } else if (resultCode == Activity.RESULT_CANCELED) {
-                Toast.makeText(this, "Login cancelled", Toast.LENGTH_SHORT).show()
-            }
-        } else if (requestCode == RC_PHOTO_PICKER && resultCode == RESULT_OK) {
+        if (requestCode == RC_PHOTO_PICKER && resultCode == RESULT_OK) {
             val imageURI = data!!.data!!
             val photoRef = chatPhotosStorageReference.child(imageURI.lastPathSegment!!)
             photoRef.putFile(imageURI).addOnSuccessListener { taskSnapshot ->
@@ -210,30 +191,25 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.sign_out_menu -> AuthUI.getInstance().signOut(this)
+            R.id.sign_out_menu -> {
+                AuthUI.getInstance().signOut(this)
+                this@ChatActivity.onBackPressed()
+            }
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        firebaseAuth.addAuthStateListener(authStateListener)
     }
 
     override fun onPause() {
         super.onPause()
         messageAdapter.clear()
         removeChildEventListener()
-        firebaseAuth.removeAuthStateListener(authStateListener)
     }
 
-    fun fetchConfig()
-    {
-        var cacheExpiration=3600L
+    private fun fetchConfig() {
+        var cacheExpiration = 3600L
 
-        if(firebaseRemoteConfig.info.configSettings.isDeveloperModeEnabled)
-        {
-            cacheExpiration=0L
+        if (firebaseRemoteConfig.info.configSettings.isDeveloperModeEnabled) {
+            cacheExpiration = 0L
         }
 
         firebaseRemoteConfig.fetch(cacheExpiration).addOnSuccessListener {
@@ -244,10 +220,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun applyRetrievedlenghtLimit(){
-        val msgLength=firebaseRemoteConfig.getLong(Constants.MSG_LENGTH_KEY)
+    fun applyRetrievedlenghtLimit() {
+        val msgLength = firebaseRemoteConfig.getLong(Constants.MSG_LENGTH_KEY)
         message_edit_text.filters = arrayOf<InputFilter>(InputFilter.LengthFilter(msgLength.toInt()))
     }
 
+    override fun onBackPressed() {
+        val intent = Intent(this, StartActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
 
 }
