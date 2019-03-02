@@ -1,12 +1,9 @@
 package com.google.firebase.udacity.friendlychat.view
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
-import android.view.MenuItem
-import android.widget.Toast
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.udacity.friendlychat.R
@@ -27,18 +24,16 @@ class StartView : AppCompatActivity() {
         authStateListener = FirebaseAuth.AuthStateListener { firebaseAuth ->
             val user = firebaseAuth.currentUser
             if (user != null) {
-                login_button.isEnabled=false
+                login_button.isEnabled = false
                 goToNextActivity(user.displayName!!)
             } else {
-                login_button.isEnabled=true
+                login_button.isEnabled = true
                 firebaseAuth.removeAuthStateListener(authStateListener)
             }
         }
         firebaseAuth.addAuthStateListener(authStateListener)
 
-
         login_button.setOnClickListener {
-
             val providers = arrayListOf(
                     AuthUI.IdpConfig.EmailBuilder().build(),
                     AuthUI.IdpConfig.GoogleBuilder().build())
@@ -48,12 +43,7 @@ class StartView : AppCompatActivity() {
                             .setAvailableProviders(providers)
                             .setIsSmartLockEnabled(false)
                             .build(), Constants.RC_SIGN_IN)
-
-
         }
-
-
-
     }
 
 
@@ -67,23 +57,16 @@ class StartView : AppCompatActivity() {
 
         if (requestCode == Constants.RC_SIGN_IN) {
             if (resultCode == RESULT_OK) {
-                Toast.makeText(this, "Signed in", Toast.LENGTH_LONG).show()
                 firebaseAuth.addAuthStateListener(authStateListener)
-               // goToNextActivity("test")
-            } else if (resultCode == Activity.RESULT_CANCELED) {
-                Toast.makeText(this, "Login cancelled", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    private fun goToNextActivity(displayName: String)
-    {
+    private fun goToNextActivity(displayName: String) {
         val intent = Intent(this, RoomView::class.java)
-        intent.putExtra(Constants.USERNAME_PARAM,displayName)
+        intent.putExtra(Constants.USERNAME_PARAM, displayName)
         startActivity(intent)
         finish()
     }
-
-
 
 }

@@ -76,7 +76,7 @@ class ChatView : AppCompatActivity() {
 
 
         firebaseDatabase = FirebaseDatabase.getInstance()
-        databaseReference = firebaseDatabase.reference.child(roomKeyExtra)
+        databaseReference = firebaseDatabase.reference.child("roomsContent").child(roomKeyExtra)
         firebaseStorage = FirebaseStorage.getInstance()
         chatPhotosStorageReference = firebaseStorage.reference.child("chat_photos")
         firebaseRemoteConfig = FirebaseRemoteConfig.getInstance()

@@ -36,8 +36,8 @@ class RoomViewModel(application: Application) : AndroidViewModel(application) {
 
     }
 
-    fun addRoom() {
-        val chatRoom = ChatRoom("test", "BestRoom3", "owo", "aaa")
+    fun addRoom(username: String, roomName: String, roomDescription: String, roomPassword: String) {
+        val chatRoom = ChatRoom(username, roomName, roomDescription, roomPassword)
         databaseReference.push().setValue(chatRoom)
     }
 
