@@ -10,13 +10,14 @@ import android.view.View
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.udacity.friendlychat.R
 import com.google.firebase.udacity.friendlychat.components.MarginItemDecoration
+import com.google.firebase.udacity.friendlychat.components.chatRooms.ChatRoomInterface
 import com.google.firebase.udacity.friendlychat.components.chatRooms.ChatRoomsAdapter
 import com.google.firebase.udacity.friendlychat.utils.Constants
+import com.google.firebase.udacity.friendlychat.utils.objects.ChatRoomWithKey
 import com.google.firebase.udacity.friendlychat.viewModels.RoomViewModel
 import kotlinx.android.synthetic.main.activity_room.*
 
-class RoomView : AppCompatActivity() {
-
+class RoomView : AppCompatActivity(), ChatRoomInterface {
     private var username = Constants.ANONYMOUS
 
     private val viewModel by lazy(LazyThreadSafetyMode.NONE) {
@@ -42,15 +43,15 @@ class RoomView : AppCompatActivity() {
         }
         room_list.addItemDecoration(
                 MarginItemDecoration(1))
+        room_list.adapter = ChatRoomsAdapter(roomListener=this)
 
         viewModel.listOfRooms.observeForever { rooms ->
             if (rooms != null) {
                 progress_bar.visibility = View.GONE
-
                 room_list.visibility = View.VISIBLE
-                room_list.adapter = ChatRoomsAdapter(rooms)
 
-
+                (room_list.adapter as ChatRoomsAdapter).updateRooms(rooms)
+                (room_list.adapter as ChatRoomsAdapter).notifyDataSetChanged()
             }
 
         }
@@ -76,6 +77,15 @@ class RoomView : AppCompatActivity() {
     override fun onBackPressed() {
         AuthUI.getInstance().signOut(this)
         val intent = Intent(this, StartView::class.java)
+        startActivity(intent)
+        finish()
+    }
+
+    override fun openRoom(room: ChatRoomWithKey) {
+        val intent = Intent(this, ChatView::class.java)
+        intent.putExtra(Constants.USERNAME_PARAM, username)
+        intent.putExtra(Constants.ROOM_KEY_PARAM, room.key)
+        intent.putExtra(Constants.ROOM_NAME_PARAM, room.room.title)
         startActivity(intent)
         finish()
     }

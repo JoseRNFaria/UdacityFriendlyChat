@@ -3,18 +3,18 @@ package com.google.firebase.udacity.friendlychat.viewModels
 import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.MutableLiveData
-import android.util.Log
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.udacity.friendlychat.utils.objects.ChatRoom
+import com.google.firebase.udacity.friendlychat.utils.objects.ChatRoomWithKey
 
 class RoomViewModel(application: Application) : AndroidViewModel(application) {
 
     private val firebaseDatabase = FirebaseDatabase.getInstance()
     private val databaseReference = firebaseDatabase.reference.child("rooms")
-    val listOfRooms = MutableLiveData<MutableList<ChatRoom>>()
+    val listOfRooms = MutableLiveData<MutableList<ChatRoomWithKey>>()
 
     fun getRooms() {
         listOfRooms.value = mutableListOf()
@@ -24,10 +24,9 @@ class RoomViewModel(application: Application) : AndroidViewModel(application) {
 
             override fun onChildAdded(p0: DataSnapshot, p1: String?) {
                 val room = p0.getValue(ChatRoom::class.java)
-                val rooms=listOfRooms.value!!
-                rooms.add(room!!)
+                val rooms = listOfRooms.value!!
+                rooms.add(ChatRoomWithKey(p0.key!!, room!!))
                 listOfRooms.postValue(rooms)
-
             }
 
             override fun onChildRemoved(p0: DataSnapshot) {}
@@ -38,7 +37,7 @@ class RoomViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun addRoom() {
-        val chatRoom = ChatRoom("test", "BestRoom2", "owo", "aaa")
+        val chatRoom = ChatRoom("test", "BestRoom3", "owo", "aaa")
         databaseReference.push().setValue(chatRoom)
     }
 

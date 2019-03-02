@@ -8,7 +8,8 @@ class Constants {
         const val MSG_LENGTH_KEY = "msg_length"
 
         const val RC_SIGN_IN = 1
-        const val USERNAME_PARAM="username"
-
+        const val USERNAME_PARAM = "username"
+        const val ROOM_KEY_PARAM = "roomKey"
+        const val ROOM_NAME_PARAM = "roomName"
     }
 }

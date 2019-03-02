@@ -62,6 +62,8 @@ class ChatView : AppCompatActivity() {
         setContentView(R.layout.activity_chat)
 
         val usernameExtra = intent.getStringExtra(Constants.USERNAME_PARAM)
+        val roomKeyExtra = intent.getStringExtra(Constants.ROOM_KEY_PARAM)
+        val roomNameExtra = intent.getStringExtra(Constants.ROOM_NAME_PARAM)
 
         if (usernameExtra == null) {
             loggedOut()
@@ -69,8 +71,12 @@ class ChatView : AppCompatActivity() {
             username = usernameExtra
         }
 
+        title=roomNameExtra
+
+
+
         firebaseDatabase = FirebaseDatabase.getInstance()
-        databaseReference = firebaseDatabase.reference.child("messages")
+        databaseReference = firebaseDatabase.reference.child(roomKeyExtra)
         firebaseStorage = FirebaseStorage.getInstance()
         chatPhotosStorageReference = firebaseStorage.reference.child("chat_photos")
         firebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
@@ -226,6 +232,7 @@ class ChatView : AppCompatActivity() {
 
     override fun onBackPressed() {
         val intent = Intent(this, RoomView::class.java)
+        intent.putExtra(Constants.USERNAME_PARAM,username)
         startActivity(intent)
         finish()
     }
