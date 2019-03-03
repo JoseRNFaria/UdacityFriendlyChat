@@ -8,5 +8,7 @@
     <string name="login_button">Login</string>
     <string name="title_activity_room">RoomActivity</string>
     <string name="button_create_room">Create</string>
+    <string name="button_join_room">Join</string>
     <string name="button_cancel_room">Cancel</string>
+
 </resources>

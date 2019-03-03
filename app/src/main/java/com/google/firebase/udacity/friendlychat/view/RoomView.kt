@@ -20,6 +20,7 @@ import com.google.firebase.udacity.friendlychat.utils.objects.ChatRoomWithKey
 import com.google.firebase.udacity.friendlychat.viewModels.RoomViewModel
 import kotlinx.android.synthetic.main.activity_room.*
 import kotlinx.android.synthetic.main.dialog_create_room.view.*
+import kotlinx.android.synthetic.main.dialog_password_room.view.*
 
 
 class RoomView : AppCompatActivity(), ChatRoomInterface {
@@ -110,12 +111,37 @@ class RoomView : AppCompatActivity(), ChatRoomInterface {
 
     override fun openRoom(room: ChatRoomWithKey) {
 
-        /* val customView = layoutInflater.inflate(R.layout.dialog_create_room, null)
+        if (room.room.password.isNotEmpty()) {
+            val customView = layoutInflater.inflate(R.layout.dialog_password_room, null)
 
-         val dialog = Dialog(this@RoomView)
-         dialog.setContentView(customView) // your custom view.
-         dialog.show()*/
+            val dialog = Dialog(this@RoomView)
+            dialog.setContentView(customView) // your custom view.
+            dialog.show()
 
+            val window = dialog.window
+            window?.setLayout(WindowManager.LayoutParams.FILL_PARENT, WindowManager.LayoutParams.WRAP_CONTENT)
+
+            customView.join_password_button.setOnClickListener {
+                if (room.room.password == customView.room_input_password.text.toString()) {
+                    enterRoom(room)
+                } else {
+                    Toast.makeText(this, "Wrong password", Toast.LENGTH_SHORT).show()
+                }
+                dialog.cancel()
+            }
+
+            customView.cancel_password_button.setOnClickListener {
+                dialog.cancel()
+            }
+
+
+        } else {
+            enterRoom(room)
+        }
+
+    }
+
+    private fun enterRoom(room: ChatRoomWithKey) {
         val intent = Intent(this, ChatView::class.java)
         intent.putExtra(Constants.USERNAME_PARAM, username)
         intent.putExtra(Constants.ROOM_KEY_PARAM, room.key)
