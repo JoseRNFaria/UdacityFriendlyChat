@@ -5,4 +5,6 @@ import com.google.firebase.udacity.friendlychat.utils.objects.ChatRoomWithKey
 interface ChatRoomInterface {
 
     fun openRoom(room:ChatRoomWithKey)
+
+    fun roomOptions(room:ChatRoomWithKey)
 }

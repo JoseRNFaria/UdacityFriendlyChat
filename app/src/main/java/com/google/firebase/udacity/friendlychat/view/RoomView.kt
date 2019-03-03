@@ -22,6 +22,7 @@ import kotlinx.android.synthetic.main.dialog_create_room.view.*
 
 
 class RoomView : AppCompatActivity(), ChatRoomInterface {
+
     private var username = Constants.ANONYMOUS
 
     private val viewModel by lazy(LazyThreadSafetyMode.NONE) {
@@ -110,5 +111,9 @@ class RoomView : AppCompatActivity(), ChatRoomInterface {
         intent.putExtra(Constants.ROOM_NAME_PARAM, room.room.title)
         startActivity(intent)
         finish()
+    }
+
+    override fun roomOptions(room: ChatRoomWithKey) {
+        Toast.makeText(this,"long click",Toast.LENGTH_SHORT).show()
     }
 }
