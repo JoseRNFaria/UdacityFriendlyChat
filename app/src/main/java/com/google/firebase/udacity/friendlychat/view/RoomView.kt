@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.WindowManager
 import android.widget.Toast
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.udacity.friendlychat.R
@@ -63,19 +64,22 @@ class RoomView : AppCompatActivity(), ChatRoomInterface {
 
     private fun customDialog() {
 
-        val customView = layoutInflater.inflate(R.layout.dialog_create_room, null)
+        val customView = layoutInflater.inflate(com.google.firebase.udacity.friendlychat.R.layout.dialog_create_room, null)
 
         val dialog = Dialog(this@RoomView)
         dialog.setContentView(customView) // your custom view.
         dialog.show()
 
+        val window = dialog.window
+        window?.setLayout(WindowManager.LayoutParams.FILL_PARENT, WindowManager.LayoutParams.WRAP_CONTENT)
+
         customView.cancel_button.setOnClickListener { dialog.cancel() }
         customView.create_button.setOnClickListener {
             if (customView.room_password.text.toString() != customView.room_confirm_password.text.toString()) {
                 dialog.cancel()
-                Toast.makeText(this,"Password and confirmation are different",Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Password and confirmation are different", Toast.LENGTH_SHORT).show()
             } else {
-                viewModel.addRoom(username,customView.room_name.text.toString(),customView.room_description.text.toString(),customView.room_password.text.toString())
+                viewModel.addRoom(username, customView.room_name.text.toString(), customView.room_description.text.toString(), customView.room_password.text.toString())
                 dialog.cancel()
             }
         }
@@ -105,6 +109,13 @@ class RoomView : AppCompatActivity(), ChatRoomInterface {
     }
 
     override fun openRoom(room: ChatRoomWithKey) {
+
+        /* val customView = layoutInflater.inflate(R.layout.dialog_create_room, null)
+
+         val dialog = Dialog(this@RoomView)
+         dialog.setContentView(customView) // your custom view.
+         dialog.show()*/
+
         val intent = Intent(this, ChatView::class.java)
         intent.putExtra(Constants.USERNAME_PARAM, username)
         intent.putExtra(Constants.ROOM_KEY_PARAM, room.key)
@@ -114,6 +125,6 @@ class RoomView : AppCompatActivity(), ChatRoomInterface {
     }
 
     override fun roomOptions(room: ChatRoomWithKey) {
-        Toast.makeText(this,"long click",Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "long click", Toast.LENGTH_SHORT).show()
     }
 }

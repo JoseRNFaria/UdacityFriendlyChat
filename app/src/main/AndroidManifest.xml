@@ -11,11 +11,9 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:name=".view.RoomView"
-            android:label="@string/title_activity_room"/>
+            android:name=".view.RoomView"/>
         <activity
-            android:name=".view.StartView"
-            android:label="@string/title_activity_start">
+            android:name=".view.StartView">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
