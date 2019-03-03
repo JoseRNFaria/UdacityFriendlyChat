@@ -25,6 +25,10 @@ class ChatRoomViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
         if (room.room.password.isEmpty()) {
             itemView.room_password.setImageResource(R.drawable.ic_lock_open_black)
         }
+        else
+        {
+            itemView.room_password.setImageResource(R.drawable.ic_lock_outline_black)
+        }
 
         itemView.setOnLongClickListener {
             roomListener.roomOptions(room)

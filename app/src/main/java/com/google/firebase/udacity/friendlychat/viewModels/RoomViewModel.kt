@@ -14,7 +14,11 @@ class RoomViewModel(application: Application) : AndroidViewModel(application) {
 
     private val firebaseDatabase = FirebaseDatabase.getInstance()
     private val databaseReference = firebaseDatabase.reference.child("rooms")
+    var totalListOfRooms = mutableListOf<ChatRoomWithKey>()
     val listOfRooms = MutableLiveData<MutableList<ChatRoomWithKey>>()
+
+    var searching = false
+    var cachedSearch = ""
 
     fun getRooms() {
         listOfRooms.value = mutableListOf()
@@ -24,9 +28,13 @@ class RoomViewModel(application: Application) : AndroidViewModel(application) {
 
             override fun onChildAdded(p0: DataSnapshot, p1: String?) {
                 val room = p0.getValue(ChatRoom::class.java)
-                val rooms = listOfRooms.value!!
-                rooms.add(ChatRoomWithKey(p0.key!!, room!!))
-                listOfRooms.postValue(rooms)
+                totalListOfRooms.add(ChatRoomWithKey(p0.key!!, room!!))
+
+                if (searching) {
+                    search(cachedSearch)
+                } else {
+                    listOfRooms.postValue(totalListOfRooms)
+                }
             }
 
             override fun onChildRemoved(p0: DataSnapshot) {}
@@ -39,6 +47,20 @@ class RoomViewModel(application: Application) : AndroidViewModel(application) {
     fun addRoom(username: String, roomName: String, roomDescription: String, roomPassword: String) {
         val chatRoom = ChatRoom(username, roomName, roomDescription, roomPassword)
         databaseReference.push().setValue(chatRoom)
+    }
+
+    fun search(searchText: String?) {
+
+        searching = if (searchText == null || searchText.isEmpty()) {
+            cachedSearch = ""
+            listOfRooms.postValue(totalListOfRooms)
+            false
+        } else {
+            cachedSearch = searchText
+            val searchedRooms = totalListOfRooms.filter { it.room.title.contains(searchText) || it.room.description.contains(searchText) }
+            listOfRooms.postValue(searchedRooms.toMutableList())
+            true
+        }
     }
 
 }

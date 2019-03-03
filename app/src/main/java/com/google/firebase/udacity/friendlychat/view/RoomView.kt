@@ -1,7 +1,9 @@
 package com.google.firebase.udacity.friendlychat.view
 
 import android.app.Dialog
+import android.app.SearchManager
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -9,6 +11,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
+import android.widget.SearchView
 import android.widget.Toast
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.udacity.friendlychat.R
@@ -89,7 +92,24 @@ class RoomView : AppCompatActivity(), ChatRoomInterface {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater = menuInflater
-        inflater.inflate(R.menu.main_menu, menu)
+        inflater.inflate(R.menu.room_menu, menu)
+
+        // Associate searchable configuration with the SearchView
+        val searchView = menu.findItem(R.id.search).actionView as SearchView
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                viewModel.search(query)
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                viewModel.search(newText)
+                return true
+            }
+
+        })
+
         return true
     }
 
