@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.google.firebase.udacity.friendlychat.utils
+package com.google.firebase.udacity.friendlychat.utils.objects
 
 data class FriendlyMessage(var text: String?=null, var name: String?=null, var photoUrl: String?=null)
 
