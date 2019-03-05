@@ -14,7 +14,7 @@ class ChatRoomViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
      * Items might be null if they are not paged in yet. PagedListAdapter will re-bind the
      * ViewHolder when Item is loaded.
      */
-    fun bindTo(room: ChatRoomWithKey, roomListener: ChatRoomInterface) {
+    fun bindTo(username:String,room: ChatRoomWithKey, roomListener: ChatRoomInterface) {
         itemView.room_name.text = room.room.title
         itemView.room_description.text = room.room.description
 
@@ -30,14 +30,27 @@ class ChatRoomViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
             itemView.room_password.setImageResource(R.drawable.ic_lock_outline_black)
         }
 
-        itemView.setOnLongClickListener {
-            roomListener.roomOptions(room)
-            return@setOnLongClickListener true
+
+
+
+        if(username==room.room.user) {
+            itemView.more_options.isEnabled=true
+            itemView.more_options.setOnClickListener {
+                roomListener.roomOptions(room)
+            }
+            itemView.setOnLongClickListener {
+                roomListener.roomOptions(room)
+                return@setOnLongClickListener true
+            }
+        }
+        else
+        {
+            itemView.more_options.isEnabled=false
+            itemView.more_options.setOnClickListener(null)
+            itemView.setOnLongClickListener(null)
         }
 
-        itemView.more_options.setOnClickListener {
-            roomListener.roomOptions(room)
-        }
+
     }
 }
 

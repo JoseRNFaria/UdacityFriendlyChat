@@ -1,9 +1,7 @@
 package com.google.firebase.udacity.friendlychat.view
 
 import android.app.Dialog
-import android.app.SearchManager
 import android.arch.lifecycle.ViewModelProviders
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -49,7 +47,7 @@ class RoomView : AppCompatActivity(), ChatRoomInterface {
 
         room_list.addItemDecoration(
                 MarginItemDecoration(1))
-        room_list.adapter = ChatRoomsAdapter(roomListener = this)
+        room_list.adapter = ChatRoomsAdapter(username, roomListener = this)
 
         viewModel.listOfRooms.observeForever { rooms ->
             if (rooms != null) {
@@ -97,7 +95,7 @@ class RoomView : AppCompatActivity(), ChatRoomInterface {
         // Associate searchable configuration with the SearchView
         val searchView = menu.findItem(R.id.search).actionView as SearchView
 
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 viewModel.search(query)
                 return true
@@ -123,10 +121,11 @@ class RoomView : AppCompatActivity(), ChatRoomInterface {
     }
 
     override fun onBackPressed() {
-        AuthUI.getInstance().signOut(this)
-        val intent = Intent(this, StartView::class.java)
-        startActivity(intent)
-        finish()
+        AuthUI.getInstance().signOut(this).addOnSuccessListener {
+            val intent = Intent(this, StartView::class.java)
+            startActivity(intent)
+            finish()
+        }
     }
 
     override fun openRoom(room: ChatRoomWithKey) {
@@ -171,6 +170,8 @@ class RoomView : AppCompatActivity(), ChatRoomInterface {
     }
 
     override fun roomOptions(room: ChatRoomWithKey) {
+
+
         Toast.makeText(this, "long click", Toast.LENGTH_SHORT).show()
     }
 }
