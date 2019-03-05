@@ -31,7 +31,16 @@ To run this project code the user needs:
 * Allow user to change their name in the app
 * Create a admin board that only the admin can write messages
 * Tests
+* Improve documentation
 
 ## Screenshots
 
-![](https://github.com/JoseRNFaria/UdacityFriendlyChat/blob/feature/chatRooms/screenshot/device-2019-03-05-142938.png?raw=true)
+<img src="screenshot/device-2019-03-05-142938.png" width="30%" hspace="20"><img src="screenshot/device-2019-03-05-143010.png" width="30%">
+
+<img src="screenshot/device-2019-03-05-143101.png" width="30%" hspace="20"><img src="screenshot/device-2019-03-05-143117.png" width="30%">
+
+<img src="screenshot/device-2019-03-05-143222.png" width="30%" hspace="20"><img src="screenshot/device-2019-03-05-143242.png" width="30%">
+
+<img src="screenshot/device-2019-03-05-143253.png" width="30%" hspace="20"><img src="screenshot/device-2019-03-05-143306.png" width="30%">
+
+<img src="screenshot/device-2019-03-05-143321.png" width="30%" hspace="20"><img src="screenshot/device-2019-03-05-143329.png" width="30%">
