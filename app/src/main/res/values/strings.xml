@@ -22,6 +22,8 @@
     <string name="room_confirm_password_label">Confirm password:</string>
     <string name="button_create_room">Create</string>
     <string name="room_input_password_label">Password:</string>
+    <string name="error_empty_field">This field must not be empty</string>
+    <string name="error_different_passwords">The password and the confirmation must be the same</string>
 
     <!--Chat activity -->
     <string name="send_button_label">Send</string>

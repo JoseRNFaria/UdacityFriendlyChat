@@ -76,13 +76,15 @@ class RoomView : AppCompatActivity(), ChatRoomsInterface {
         window?.setLayout(WindowManager.LayoutParams.FILL_PARENT, WindowManager.LayoutParams.WRAP_CONTENT)
 
         customView.cancel_button.setOnClickListener { dialog.cancel() }
+
         customView.create_button.setOnClickListener {
-            if (customView.room_password.text.toString() != customView.room_confirm_password.text.toString()) {
-                dialog.cancel()
-                Toast.makeText(this, "Password and confirmation are different", Toast.LENGTH_SHORT).show()
-            } else {
-                viewModel.addRoom(username, customView.room_name.text.toString(), customView.room_description.text.toString(), customView.room_password.text.toString())
-                dialog.cancel()
+            when {
+                customView.room_name.text.toString().isEmpty() -> customView.room_name.error = getString(R.string.error_empty_field)
+                customView.room_password.text.toString() != customView.room_confirm_password.text.toString() -> customView.room_confirm_password.error = getString(R.string.error_different_passwords)
+                else -> {
+                    viewModel.addRoom(username, customView.room_name.text.toString(), customView.room_description.text.toString(), customView.room_password.text.toString())
+                    dialog.cancel()
+                }
             }
         }
 
