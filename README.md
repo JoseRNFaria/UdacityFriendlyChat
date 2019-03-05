@@ -37,16 +37,20 @@ To run this project code the user needs:
 ## Screenshots
 
 <img src="screenshot/device-2019-03-05-142938.png" width="30%" border="5"><img src="screenshot/device-2019-03-05-143010.png" width="30%" border="5" hspace="20"> <img src="screenshot/device-2019-03-05-143101.png" width="30%" border="5">
+</br>
 Login process: Starts in StartActivity (first activity) when "login" button is pressed, if login is successful then the user goes to the list of chat rooms
 
 
 <img src="screenshot/device-2019-03-05-143117.png" width="30%"><img src="screenshot/device-2019-03-05-143222.png" width="30%" hspace="20"><img src="screenshot/device-2019-03-05-143242.png" width="30%">
+</br>
 Create chat room: to create a chat room the must press the + button and a dialog to be filled will appear, at the moment only the room name is needed to be filled the rest is optional 
 
 
 <img src="screenshot/device-2019-03-05-143242.png" width="30%"><img src="screenshot/device-2019-03-05-143253.png" width="30%" hspace="20"><img src="screenshot/device-2019-03-05-143306.png" width="30%">
+</br>
 Join room: To join a room the user only need to press the wanted rrom and fill the password if the room is locked
 
 
 <img src="screenshot/device-2019-03-05-143306.png" width="30%"> <img src="screenshot/device-2019-03-05-143321.png" width="30%" hspace="20"><img src="screenshot/device-2019-03-05-143329.png" width="30%">
+</br>
 Chat room: In the chat room the user can see and send different messages
