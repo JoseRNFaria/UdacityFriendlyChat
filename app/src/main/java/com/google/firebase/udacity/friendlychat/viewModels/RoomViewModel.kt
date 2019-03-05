@@ -22,6 +22,7 @@ class RoomViewModel(application: Application) : AndroidViewModel(application) {
 
     fun getRooms() {
         listOfRooms.value = mutableListOf()
+
         val eventListener = object : ChildEventListener {
             override fun onChildMoved(p0: DataSnapshot, p1: String?) {}
             override fun onChildChanged(p0: DataSnapshot, p1: String?) {}

@@ -9,7 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:labelFor="@id/room_name"
-        android:text="Password:"/>
+        android:text="@string/room_input_password_label"/>
     <EditText
         android:id="@+id/room_input_password"
         android:layout_width="match_parent"

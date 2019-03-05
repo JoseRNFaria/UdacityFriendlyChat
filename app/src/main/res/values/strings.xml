@@ -3,15 +3,30 @@
     <string name="sign_out">Sign Out</string>
     <string name="search">Search</string>
 
-
-    <string name="send_button_label">Send</string>
+    <!-- Start activity-->
     <string name="title_activity_start">StartActivity</string>
     <string name="start_Activity_text">You are not logged in please login in order to join a chat room</string>
     <string name="login_button">Login</string>
+
+    <!--List of rooms activity-->
     <string name="title_activity_room">RoomActivity</string>
-    <string name="button_create_room">Create</string>
     <string name="button_join_room">Join</string>
     <string name="button_cancel_room">Cancel</string>
+    <string name="room_password_desc">Room locked icon</string>
+    <string name="more_options_desc">More room options</string>
+
+    <!--Room dialogs-->
+    <string name="room_name_label">Name:</string>
+    <string name="room_description_label">Description:</string>
+    <string name="room_password_label">Password:</string>
+    <string name="room_confirm_password_label">Confirm password:</string>
+    <string name="button_create_room">Create</string>
+    <string name="room_input_password_label">Password:</string>
+
+    <!--Chat activity -->
+    <string name="send_button_label">Send</string>
+    <string name="photo_picker_button_desc">Choose image to send</string>
+    <string name="photo_image_view_desc">Image sent by user</string>
 
 
 </resources>

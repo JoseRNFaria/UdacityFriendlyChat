@@ -14,7 +14,7 @@ import android.widget.Toast
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.udacity.friendlychat.R
 import com.google.firebase.udacity.friendlychat.components.MarginItemDecoration
-import com.google.firebase.udacity.friendlychat.components.chatRooms.ChatRoomInterface
+import com.google.firebase.udacity.friendlychat.components.chatRooms.ChatRoomsInterface
 import com.google.firebase.udacity.friendlychat.components.chatRooms.ChatRoomsAdapter
 import com.google.firebase.udacity.friendlychat.utils.Constants
 import com.google.firebase.udacity.friendlychat.utils.objects.ChatRoomWithKey
@@ -24,7 +24,7 @@ import kotlinx.android.synthetic.main.dialog_create_room.view.*
 import kotlinx.android.synthetic.main.dialog_password_room.view.*
 
 
-class RoomView : AppCompatActivity(), ChatRoomInterface {
+class RoomView : AppCompatActivity(), ChatRoomsInterface {
 
     private var username = Constants.ANONYMOUS
 
@@ -47,7 +47,7 @@ class RoomView : AppCompatActivity(), ChatRoomInterface {
 
         room_list.addItemDecoration(
                 MarginItemDecoration(1))
-        room_list.adapter = ChatRoomsAdapter(username, roomListener = this)
+        room_list.adapter = ChatRoomsAdapter(username, roomsListener = this)
 
         viewModel.listOfRooms.observeForever { rooms ->
             if (rooms != null) {

@@ -9,7 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:labelFor="@id/room_name"
-        android:text="Name:"/>
+        android:text="@string/room_name_label"/>
     <EditText
         android:id="@+id/room_name"
         android:layout_width="match_parent"
@@ -20,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:labelFor="@id/room_name"
-        android:text="Description:"/>
+        android:text="@string/room_description_label"/>
     <EditText
         android:id="@+id/room_description"
         android:layout_width="match_parent"
@@ -31,7 +31,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:labelFor="@id/room_name"
-        android:text="Password:"/>
+        android:text="@string/room_password_label"/>
     <EditText
         android:id="@+id/room_password"
         android:layout_width="match_parent"
@@ -43,13 +43,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:labelFor="@id/room_name"
-        android:text="Confirm password:"/>
+        android:text="@string/room_confirm_password_label"/>
     <EditText
         android:id="@+id/room_confirm_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:inputType="textPassword" />
+        android:inputType="textPassword"/>
 
 
     <android.support.constraint.ConstraintLayout
