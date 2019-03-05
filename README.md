@@ -14,4 +14,6 @@ Follow the server setup of the udacity course.
 * Chat rooms (with passwords)
 * admin message board
 
-## Screenshot
+## Screenshots
+
+![](https://github.com/JoseRNFaria/UdacityFriendlyChat/blob/feature/chatRooms/screenshot/device-2019-03-05-142938.png?raw=true  =250x)
