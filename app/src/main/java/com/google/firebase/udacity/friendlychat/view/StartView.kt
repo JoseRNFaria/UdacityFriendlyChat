@@ -1,17 +1,16 @@
 package com.google.firebase.udacity.friendlychat.view
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.widget.Toast
+import android.view.Menu
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.udacity.friendlychat.R
 import com.google.firebase.udacity.friendlychat.utils.Constants
 import kotlinx.android.synthetic.main.activity_start.*
 
-class StartActivity : AppCompatActivity() {
+class StartView : AppCompatActivity() {
 
     private lateinit var authStateListener: FirebaseAuth.AuthStateListener
     private lateinit var firebaseAuth: FirebaseAuth
@@ -22,17 +21,16 @@ class StartActivity : AppCompatActivity() {
 
         firebaseAuth = FirebaseAuth.getInstance()
 
-
         authStateListener = FirebaseAuth.AuthStateListener { firebaseAuth ->
             val user = firebaseAuth.currentUser
             if (user != null) {
-                login_button.isEnabled=false
+                login_button.isEnabled = false
                 goToNextActivity(user.displayName!!)
             } else {
-                login_button.isEnabled=true
+                login_button.isEnabled = true
+                firebaseAuth.removeAuthStateListener(authStateListener)
             }
         }
-
         firebaseAuth.addAuthStateListener(authStateListener)
 
         login_button.setOnClickListener {
@@ -46,27 +44,27 @@ class StartActivity : AppCompatActivity() {
                             .setIsSmartLockEnabled(false)
                             .build(), Constants.RC_SIGN_IN)
         }
-
-
-
     }
+
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        return true
+    }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == Constants.RC_SIGN_IN) {
             if (resultCode == RESULT_OK) {
-                Toast.makeText(this, "Signed in", Toast.LENGTH_LONG).show()
-            } else if (resultCode == Activity.RESULT_CANCELED) {
-                Toast.makeText(this, "Login cancelled", Toast.LENGTH_SHORT).show()
+                firebaseAuth.addAuthStateListener(authStateListener)
             }
         }
     }
 
-    private fun goToNextActivity(displayName: String)
-    {
-        val intent = Intent(this, ChatActivity::class.java)
-        intent.putExtra(Constants.USERNAME_PARAM,displayName)
+    private fun goToNextActivity(displayName: String) {
+        val intent = Intent(this, RoomView::class.java)
+        intent.putExtra(Constants.USERNAME_PARAM, displayName)
         startActivity(intent)
         finish()
     }

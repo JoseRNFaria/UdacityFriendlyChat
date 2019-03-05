@@ -4,13 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".view.StartActivity">
+
+    tools:context=".view.StartView">
 
 
     <TextView
         android:id="@+id/login_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center"
         android:text="@string/start_Activity_text" />
 
     <Button
@@ -18,5 +21,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:enabled="false"
+        android:layout_gravity="center"
         android:text="@string/login_button" />
 </LinearLayout>
